@@ -115,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void getandsetIntent() {
         if (getIntent() != null && getIntent().hasExtra("name") && getIntent().hasExtra("address")) {
-            text_device.setText(getIntent().getStringExtra("name"));
+//            text_device.setText(getIntent().getStringExtra("name"));
             mDevice = bluetoothAdapter.getRemoteDevice(getIntent().getStringExtra("address"));
 
             if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.BLUETOOTH_ADMIN) != PackageManager.PERMISSION_GRANTED) {
