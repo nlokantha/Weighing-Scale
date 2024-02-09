@@ -63,10 +63,11 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String minVal=edit_minValue.getText().toString();
                 if (minVal.isEmpty()){
-                    Toast.makeText(MainActivity.this, "Please Set Min Value", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "Please Set The Min Value", Toast.LENGTH_SHORT).show();
                 }else {
 //                    minValue = Integer.parseInt(edit_minValue.getText().toString());
                     minValue = Double.parseDouble(minVal);
+                    Toast.makeText(MainActivity.this, "Done", Toast.LENGTH_SHORT).show();
                 }
             }
         });
