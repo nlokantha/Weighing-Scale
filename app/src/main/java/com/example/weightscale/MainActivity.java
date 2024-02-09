@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,16 +26,19 @@ import java.text.DecimalFormat;
 import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
-    private Button btn_deviceList,btn_copy;
+    private Button btn_deviceList,btn_copy,btn_minValue;
+
+    private EditText edit_minValue;
     public static BluetoothAdapter bluetoothAdapter;
     private TextView text_device;
     UUID uuid = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     private BluetoothSocket mSocket;
     private BluetoothDevice mDevice;
     private InputStream inputStream;
-    private DecimalFormat decimalFormat;
     public static final String TAG="demo";
     public static final int REQUEST_BLUETOOTH = 100;
+
+    double minValue=400;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,23 +58,16 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        btn_copy.setOnClickListener(new View.OnClickListener() {
+        btn_minValue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ClipboardManager clipboard= (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-                ClipData clip = ClipData.newPlainText("EditText", text_device.getText().toString());
-                clipboard.setPrimaryClip(clip);
-
-                clip.getDescription();
-
-                Toast.makeText(MainActivity.this, "Text is Copied", Toast.LENGTH_SHORT).show();
-
-//                String dataToCopy = text_device.getText().toString();
-//
-//                // Start the service to copy data in the background
-//                Intent serviceIntent = new Intent(MainActivity.this, ClipboardCopyService.class);
-//                serviceIntent.putExtra("data", dataToCopy);
-//                startService(serviceIntent);
+                String minVal=edit_minValue.getText().toString();
+                if (minVal.isEmpty()){
+                    Toast.makeText(MainActivity.this, "Please Set Min Value", Toast.LENGTH_SHORT).show();
+                }else {
+//                    minValue = Integer.parseInt(edit_minValue.getText().toString());
+                    minValue = Double.parseDouble(minVal);
+                }
             }
         });
 
@@ -80,6 +77,9 @@ public class MainActivity extends AppCompatActivity {
         btn_deviceList = findViewById(R.id.btn_deviceList);
         btn_copy = findViewById(R.id.btn_copy);
         text_device = findViewById(R.id.text_device);
+
+        btn_minValue=findViewById(R.id.btn_minValue);
+        edit_minValue=findViewById(R.id.edit_minValue);
     }
 
     public void enableBlue(){
@@ -127,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
                 if (mSocket.isConnected()) {
                     Toast.makeText(MainActivity.this, "Connected", Toast.LENGTH_SHORT).show();
                     inputStream = mSocket.getInputStream();
-                    decimalFormat = new DecimalFormat("00.00");
+//                    decimalFormat = new DecimalFormat("00.00");
 //                    startReadingThread();
                     Reading2();
                 }
@@ -234,8 +234,11 @@ public class MainActivity extends AppCompatActivity {
                                     @Override
                                     public void run() {
                                         text_device.setText(finalReceivedData.toString().trim());
-                                        copyToClipboard(String.valueOf(finalReceivedData));
+                                        double Value = Double.parseDouble(finalReceivedData.toString().trim());
 
+                                        if (Value>=minValue){
+                                            copyToClipboard(String.valueOf(finalReceivedData));
+                                        }
                                     }
                                 });
                                 // Reset StringBuilder for the next message
